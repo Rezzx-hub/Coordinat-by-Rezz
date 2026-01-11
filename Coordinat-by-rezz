@@ -1,0 +1,172 @@
+--[[
+    COORDINATE FINDER - FORMAT SCRIPT JELAS (DRAGGABLE)
+]]
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local RunService = game:GetService("RunService")
+
+-- Hapus GUI lama jika ada
+if LocalPlayer.PlayerGui:FindFirstChild("CoordFinderGUI") then
+    LocalPlayer.PlayerGui.CoordFinderGUI:Destroy()
+end
+
+-- ==================== BUAT GUI ====================
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "CoordFinderGUI"
+screenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+
+-- Main Frame (DRAGGABLE)
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0, 350, 0, 350)
+mainFrame.Position = UDim2.new(0.5, -175, 0.5, -175)
+mainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+mainFrame.BorderSizePixel = 0
+mainFrame.Active = true      -- ⬅️ INI PENTING UNTUK DRAGGABLE
+mainFrame.Draggable = true   -- ⬅️ INI YANG BUAT BISA DIGESER
+mainFrame.Parent = screenGui
+
+local UICorner = Instance.new("UICorner")
+UICorner.CornerRadius = UDim.new(0, 10)
+UICorner.Parent = mainFrame
+
+-- Title
+local title = Instance.new("TextLabel")
+title.Text = "📌 COORDINATE FINDER"
+title.Size = UDim2.new(1, 0, 0, 40)
+title.BackgroundColor3 = Color3.fromRGB(40, 40, 60)
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.Font = Enum.Font.GothamBold
+title.TextSize = 18
+title.Parent = mainFrame
+
+-- Current Position Box
+local currentBox = Instance.new("Frame")
+currentBox.Size = UDim2.new(1, -20, 0, 150)
+currentBox.Position = UDim2.new(0, 10, 0, 50)
+currentBox.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+currentBox.BorderSizePixel = 0
+currentBox.Parent = mainFrame
+
+local boxCorner = Instance.new("UICorner")
+boxCorner.CornerRadius = UDim.new(0, 8)
+boxCorner.Parent = currentBox
+
+-- Coordinates Display
+local coordsDisplay = Instance.new("TextLabel")
+coordsDisplay.Size = UDim2.new(1, -20, 1, -20)
+coordsDisplay.Position = UDim2.new(0, 10, 0, 10)
+coordsDisplay.BackgroundTransparency = 1
+coordsDisplay.TextColor3 = Color3.fromRGB(255, 255, 255)
+coordsDisplay.Font = Enum.Font.Code
+coordsDisplay.TextSize = 14
+coordsDisplay.TextXAlignment = Enum.TextXAlignment.Left
+coordsDisplay.TextYAlignment = Enum.TextYAlignment.Top
+coordsDisplay.Text = "Loading..."
+coordsDisplay.Parent = currentBox
+
+-- FORMAT SCRIPT BOX
+local scriptBox = Instance.new("Frame")
+scriptBox.Size = UDim2.new(1, -20, 0, 100)
+scriptBox.Position = UDim2.new(0, 10, 0, 210)
+scriptBox.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+scriptBox.BorderSizePixel = 0
+scriptBox.Parent = mainFrame
+
+local scriptCorner = Instance.new("UICorner")
+scriptCorner.CornerRadius = UDim.new(0, 8)
+scriptCorner.Parent = scriptBox
+
+local scriptTitle = Instance.new("TextLabel")
+scriptTitle.Text = "📝 FORMAT UNTUK SCRIPT:"
+scriptTitle.Size = UDim2.new(1, 0, 0, 25)
+scriptTitle.BackgroundTransparency = 1
+scriptTitle.TextColor3 = Color3.fromRGB(255, 200, 0)
+scriptTitle.Font = Enum.Font.GothamBold
+scriptTitle.TextSize = 14
+scriptTitle.Parent = scriptBox
+
+local scriptText = Instance.new("TextLabel")
+scriptText.Size = UDim2.new(1, -10, 1, -30)
+scriptText.Position = UDim2.new(0, 10, 0, 25)
+scriptText.BackgroundTransparency = 1
+scriptText.TextColor3 = Color3.fromRGB(255, 255, 255)
+scriptText.Font = Enum.Font.Code
+scriptText.TextSize = 14
+scriptText.TextXAlignment = Enum.TextXAlignment.Left
+scriptText.TextYAlignment = Enum.TextYAlignment.Top
+scriptText.Text = "Vector3.new(0, 0, 0)"
+scriptText.Parent = scriptBox
+
+-- Save Button
+local saveButton = Instance.new("TextButton")
+saveButton.Text = "💾 SIMPAN LOKASI INI"
+saveButton.Size = UDim2.new(1, -20, 0, 35)
+saveButton.Position = UDim2.new(0, 10, 0, 320)
+saveButton.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
+saveButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+saveButton.Font = Enum.Font.GothamBold
+saveButton.TextSize = 14
+saveButton.Parent = mainFrame
+
+local saveCorner = Instance.new("UICorner")
+saveCorner.CornerRadius = UDim.new(0, 8)
+saveCorner.Parent = saveButton
+
+-- Saved Locations
+local savedLocations = {}
+local locationCounter = 1
+
+-- FUNGSI UPDATE DISPLAY
+local function updateDisplay()
+    local character = LocalPlayer.Character
+    if character then
+        local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+        if humanoidRootPart then
+            local pos = humanoidRootPart.Position
+            
+            -- Update coordinates display
+            coordsDisplay.Text = string.format(
+                "X: %.1f\nY: %.1f\nZ: %.1f",
+                pos.X, pos.Y, pos.Z
+            )
+            
+            -- Update script format
+            scriptText.Text = string.format(
+                "Vector3.new(%d, %d, %d)",
+                math.floor(pos.X), math.floor(pos.Y), math.floor(pos.Z)
+            )
+        end
+    end
+end
+
+-- Save button click
+saveButton.MouseButton1Click:Connect(function()
+    local character = LocalPlayer.Character
+    if character then
+        local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+        if humanoidRootPart then
+            local pos = humanoidRootPart.Position
+            local coordString = string.format("Vector3.new(%d, %d, %d)", 
+                math.floor(pos.X), math.floor(pos.Y), math.floor(pos.Z))
+            
+            table.insert(savedLocations, {
+                name = "Location " .. locationCounter,
+                coords = coordString
+            })
+            
+            locationCounter = locationCounter + 1
+            
+            print("========================================")
+            print("✅ LOKASI DISIMPAN!")
+            print("Koordinat: " .. coordString)
+            print("========================================")
+        end
+    end
+end)
+
+-- Update real-time
+RunService.RenderStepped:Connect(updateDisplay)
+
+print("✅ COORDINATE FINDER ACTIVATED!")
+print("GUI bisa digeser (draggable)")
