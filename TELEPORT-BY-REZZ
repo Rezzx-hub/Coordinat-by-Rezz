@@ -1,0 +1,154 @@
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+
+local LOCATIONS = {
+    ["TP CALESTIAL"] = Vector3.new(2605, -3, 2),
+    ["TP SECRET"] = Vector3.new(2255, -3, -1),
+    ["TP BASE"] = Vector3.new(121, 3, 0)
+}
+
+local function showNotification()
+    local notifGui = Instance.new("ScreenGui")
+    notifGui.Name = "NotifRezz"
+    notifGui.Parent = PlayerGui
+    
+    local notifFrame = Instance.new("Frame")
+    notifFrame.Size = UDim2.new(0, 400, 0, 70)
+    notifFrame.Position = UDim2.new(0.5, -200, 0.05, 0)
+    notifFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    notifFrame.BackgroundTransparency = 0.2
+    notifFrame.BorderSizePixel = 0
+    notifFrame.Parent = notifGui
+    
+    local notifText = Instance.new("TextLabel")
+    notifText.Text = "JANGAN DIJUAL ATAU DIKLAIM SEBAGAI BUATAN SENDIRI!\nUsn pembuat script: Rezz_8890"
+    notifText.Size = UDim2.new(1, 0, 1, 0)
+    notifText.BackgroundTransparency = 1
+    notifText.TextColor3 = Color3.fromRGB(255, 255, 255)
+    notifText.Font = Enum.Font.GothamBold
+    notifText.TextSize = 13
+    notifText.TextWrapped = true
+    notifText.Parent = notifFrame
+    
+    task.wait(3.7)
+    notifGui:Destroy()
+end
+
+local function createGUI()
+    if PlayerGui:FindFirstChild("TELEPORT") then
+        PlayerGui.TELEPORT:Destroy()
+    end
+    
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "TELEPORT"
+    screenGui.ResetOnSpawn = false
+    screenGui.Parent = PlayerGui
+    
+    local mainFrame = Instance.new("Frame")
+    mainFrame.Size = UDim2.new(0, 280, 0, 200)  -- ⬅️ TINGGI 200
+    mainFrame.Position = UDim2.new(0.5, -140, 0.5, -100)  -- ⬅️ POSISI DISESUAIKAN (200/2 = 100)
+    mainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    mainFrame.BackgroundTransparency = 0.2
+    mainFrame.BorderSizePixel = 0
+    mainFrame.Active = true
+    mainFrame.Draggable = true
+    mainFrame.Parent = screenGui
+    
+    local titleText = Instance.new("TextLabel")
+    titleText.Text = "TELEPORT"
+    titleText.Size = UDim2.new(1, 0, 0, 30)
+    titleText.Position = UDim2.new(0, 0, 0, 0)
+    titleText.BackgroundTransparency = 1
+    titleText.TextColor3 = Color3.fromRGB(255, 255, 255)
+    titleText.Font = Enum.Font.GothamBold
+    titleText.TextSize = 20
+    titleText.Parent = mainFrame
+    
+    local celestialBtn = Instance.new("TextButton")
+    celestialBtn.Text = "TP CALESTIAL"
+    celestialBtn.Size = UDim2.new(0.94, 0, 0, 45)
+    celestialBtn.Position = UDim2.new(0.03, 0, 0.18, 0)
+    celestialBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 60)
+    celestialBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    celestialBtn.Font = Enum.Font.GothamBold
+    celestialBtn.TextSize = 16
+    celestialBtn.Parent = mainFrame
+    
+    local secretBtn = Instance.new("TextButton")
+    secretBtn.Text = "TP SECRET"
+    secretBtn.Size = UDim2.new(0.94, 0, 0, 45)
+    secretBtn.Position = UDim2.new(0.03, 0, 0.45, 0)
+    secretBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 60)
+    secretBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    secretBtn.Font = Enum.Font.GothamBold
+    secretBtn.TextSize = 16
+    secretBtn.Parent = mainFrame
+    
+    local baseBtn = Instance.new("TextButton")
+    baseBtn.Text = "TP BASE"
+    baseBtn.Size = UDim2.new(0.94, 0, 0, 45)
+    baseBtn.Position = UDim2.new(0.03, 0, 0.72, 0)
+    baseBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 60)
+    baseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    baseBtn.Font = Enum.Font.GothamBold
+    baseBtn.TextSize = 16
+    baseBtn.Parent = mainFrame
+    
+    local emptyText = Instance.new("TextLabel")
+    emptyText.Text = " "
+    emptyText.Size = UDim2.new(0.94, 0, 0, 1)
+    emptyText.Position = UDim2.new(0.03, 0, 0.98, 0)
+    emptyText.BackgroundTransparency = 1
+    emptyText.TextColor3 = Color3.fromRGB(255, 255, 255)
+    emptyText.Font = Enum.Font.Gotham
+    emptyText.TextSize = 1
+    emptyText.Parent = mainFrame
+    
+    local function teleportPlayer(locationName)
+        local character = LocalPlayer.Character
+        if not character then 
+            return 
+        end
+        
+        local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+        if not humanoidRootPart then 
+            return 
+        end
+        
+        local targetPosition = LOCATIONS[locationName]
+        if not targetPosition then 
+            return 
+        end
+        
+        humanoidRootPart.CFrame = CFrame.new(targetPosition)
+    end
+    
+    celestialBtn.MouseButton1Click:Connect(function()
+        teleportPlayer("TP CALESTIAL")
+    end)
+    
+    secretBtn.MouseButton1Click:Connect(function()
+        teleportPlayer("TP SECRET")
+    end)
+    
+    baseBtn.MouseButton1Click:Connect(function()
+        teleportPlayer("TP BASE")
+    end)
+end
+
+showNotification()
+createGUI()
+
+LocalPlayer.CharacterAdded:Connect(function()
+    task.wait(1)
+    createGUI()
+end)
+
+print("==========================================")
+print("TELEPORT SCRIPT BY Rezz_8890")
+print("JANGAN DIJUAL ATAU DIKLAIM SEBAGAI BUATAN SENDIRI!")
+print("TP CALESTIAL: " .. tostring(LOCATIONS["TP CALESTIAL"]))
+print("TP SECRET: " .. tostring(LOCATIONS["TP SECRET"]))
+print("TP BASE: " .. tostring(LOCATIONS["TP BASE"]))
+print("==========================================")
